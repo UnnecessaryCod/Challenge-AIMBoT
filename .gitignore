@@ -1,0 +1,19 @@
+# Entorno y credenciales
+.env
+venv/
+.venv/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Base vectorial generada
+data/processed/vector_store/
+
+# Sistema y temporales
+.DS_Store
+.ipynb_checkpoints/
+*.log
+*.tmp
+Thumbs.db
