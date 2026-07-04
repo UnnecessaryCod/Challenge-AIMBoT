@@ -1,0 +1,10 @@
+Código,Archivo limpio,Categoría,Uso en AimBot,Nivel de confidencialidad,Estado,Acción
+KB-00,00_readme_base_conocimiento.md,Gobierno documental,"Define alcance, exclusiones y reglas de uso",Interno de proyecto,Aprobado,Usar como guía
+KB-01,01_institucional_aimtalent.md,Institucional,"Explicar quién es AIMTALENT, propósito, cobertura y diferenciales",Público comercial,Aprobado,Cargar al RAG
+KB-02,02_aimbot_comportamiento.md,Prompt / comportamiento,"Definir tono, rol, datos a recoger y cierre conversacional",Interno de proyecto,Aprobado,Usar en prompt del sistema y/o RAG
+KB-03,03_executive_search.md,Servicio comercial,Responder sobre Executive Search y mapeo externo,Público comercial,Aprobado,Cargar al RAG
+KB-04,04_hiring_solutions.md,Servicio comercial,"Responder sobre Hiring, RPO, volumen, Aim IT, trainee y evaluaciones",Público comercial,Aprobado,Cargar al RAG
+KB-05,05_consulting.md,Servicio comercial,"Responder sobre liderazgo, coaching, mentoring y team building",Público comercial,Aprobado,Cargar al RAG
+KB-06,06_advisory.md,Servicio comercial,"Responder sobre clima, cultura, competencias, sucesión, 360 y outplacement",Público comercial,Aprobado,Cargar al RAG
+KB-07,07_metodologia_y_trazabilidad.md,Metodología / tecnología,"Explicar AimTarget, plataforma, dashboards y trazabilidad",Público comercial,Aprobado,Cargar al RAG
+KB-08,08_checklist_diagnostico_propuesta.md,Diagnóstico comercial,Guiar preguntas de levantamiento para propuesta,Interno comercial,Aprobado,Usar como guía de conversación
