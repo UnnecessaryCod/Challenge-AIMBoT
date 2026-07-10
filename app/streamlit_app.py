@@ -232,14 +232,35 @@ st.markdown(
         font-weight: 500;
     }}
 
-    /* --- Avatar de AimBot: pequeño, redondo y sin deformar --- */
+    /* --- Avatar de AimBot: completo, sin recorte ni deformación --- */
+    /* La imagen es vertical: object-fit contain la muestra íntegra y el
+       radio de 12px (no círculo) evita recortar las antenas del robot. */
     [data-testid="stChatMessage"] img[alt="assistant avatar"] {{
-        width: 38px !important;
-        height: 38px !important;
-        border-radius: 50%;
-        object-fit: cover;
+        width: 44px !important;
+        height: 44px !important;
+        max-width: 44px;
+        max-height: 44px;
+        object-fit: contain;
+        object-position: center;
+        border-radius: 12px;
+        flex-shrink: 0;
+        margin-right: 2px;
+        margin-top: 2px;
         border: 1.5px solid {BRAND_GRAY_BORDER};
         background: #FFFFFF;
+        overflow: visible;
+    }}
+    [data-testid="stChatMessage"] {{
+        align-items: flex-start;
+        gap: 12px;
+    }}
+    @media (max-width: 480px) {{
+        [data-testid="stChatMessage"] img[alt="assistant avatar"] {{
+            width: 36px !important;
+            height: 36px !important;
+            max-width: 36px;
+            max-height: 36px;
+        }}
     }}
 
     /* --- Botones principales (azul de marca) --- */
