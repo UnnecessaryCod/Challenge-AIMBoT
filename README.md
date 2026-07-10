@@ -6,6 +6,22 @@
 
 La aplicación funciona bajo lógica **RAG (Retrieval-Augmented Generation)**: recupera los fragmentos documentales más relevantes para cada pregunta y genera una respuesta fundamentada, mostrando siempre las fuentes utilizadas.
 
+## Demo desplegada en Oracle Cloud Infrastructure
+
+La aplicación AIMBOT Knowledge Agent fue desplegada en Oracle Cloud Infrastructure utilizando una instancia Compute con Ubuntu, Python y Streamlit.
+
+**URL pública de la demo:** http://148.116.110.214:8501
+
+**Stack del despliegue:**
+
+- Oracle Cloud Infrastructure Compute Instance
+- Ubuntu 22.04
+- Python 3.10
+- Streamlit
+- ChromaDB
+- Gemini API
+- GitHub
+
 ## 2. Objetivo
 
 - Responder preguntas sobre AIMTALENT y sus unidades de negocio.
@@ -197,7 +213,7 @@ No encontré información suficiente en la base documental disponible para respo
 
 ## 14. Reglas de seguridad documental
 
-El agente usa **únicamente** la base documental limpia (`data/raw`). No incluye ni debe reintroducirse:
+El agente usa **únicamente** la base documental limpia (`data/raw`). Los documentos internos de configuración y control (`00_readme_base_conocimiento.md`, `02_aimbot_comportamiento.md`, `09_matriz_documental_limpia.md`) **no se indexan en el vector store ni aparecen como fuentes visibles**; solo se muestran documentos comerciales, metodológicos e institucionales aptos para usuario final. Además, no incluye ni debe reintroducirse:
 
 - Nombres de clientes reales ni logos de clientes.
 - Políticas internas.
@@ -218,9 +234,19 @@ streamlit run app/streamlit_app.py --server.port 8501 --server.address 0.0.0.0
 
 ## 16. Evidencia de funcionamiento
 
+- **Demo pública en OCI:** http://148.116.110.214:8501
 - Capturas de la app funcionando: `assets/screenshots/`
 - Video demo: `assets/demo/`
-- Evidencia de ejecución en OCI (captura o URL pública).
+
+Capturas recomendadas para `assets/screenshots/` (sin API keys, `.env` ni datos de la cuenta OCI):
+
+| Archivo sugerido | Contenido |
+|---|---|
+| `01_pantalla_inicial_oci.png` | Pantalla inicial de AimBot en la URL pública de OCI |
+| `02_respuesta_hiring.png` | Respuesta consultiva sobre Hiring Solutions |
+| `03_fuentes_referencia.png` | Expander "Fuentes de referencia" con documentos comerciales |
+| `04_fallback_fuera_alcance.png` | Pregunta fuera de alcance con fallback sin fuentes |
+| `05_oci_instance_running.png` | Instancia Compute en estado Running (opcional) |
 
 ## 17. Pruebas
 

@@ -7,6 +7,14 @@ from pathlib import Path
 
 from src.config import settings
 
+# Documentos internos de configuración/control: no se indexan en el vector store
+# ni deben aparecer como fuentes visibles para el usuario final.
+EXCLUDED_SOURCES = {
+    "00_readme_base_conocimiento.md",
+    "02_aimbot_comportamiento.md",
+    "09_matriz_documental_limpia.md",
+}
+
 # Categoría inferida desde el nombre del archivo de la base limpia
 CATEGORY_MAP = {
     "00_readme_base_conocimiento": "Base de conocimiento",
@@ -30,14 +38,22 @@ def infer_category(filename: str) -> str:
     return stem.replace("_", " ").strip().title() or "General"
 
 
-def load_markdown_documents(folder_path: str | None = None) -> list[dict]:
-    """Carga los documentos Markdown de la base limpia con su metadata."""
+def load_markdown_documents(
+    folder_path: str | None = None, include_internal: bool = False
+) -> list[dict]:
+    """
+    Carga los documentos Markdown de la base limpia con su metadata.
+    Por defecto excluye los documentos internos (EXCLUDED_SOURCES),
+    que no deben indexarse ni mostrarse como fuentes.
+    """
     path = Path(folder_path or settings.DOCUMENTS_PATH)
     if not path.exists():
         return []
 
     documents = []
     for file in sorted(path.glob("*.md")):
+        if not include_internal and file.name in EXCLUDED_SOURCES:
+            continue
         content = file.read_text(encoding="utf-8").strip()
         if not content:
             continue

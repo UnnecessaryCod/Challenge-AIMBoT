@@ -35,6 +35,8 @@ LLM → respuesta con fuentes, o fallback si no hay evidencia
 ## Decisiones de diseño
 
 - **Sin LangChain**: el flujo se implementa directo con ChromaDB y SDKs oficiales; menos dependencias, más trazabilidad.
+- **Documentos internos excluidos**: `00_readme_base_conocimiento.md`, `02_aimbot_comportamiento.md` y `09_matriz_documental_limpia.md` no se indexan ni se muestran como fuentes (son configuración/control, no contenido comercial). Hay un filtro adicional en la generación por si un índice antiguo los contiene.
+- **Fallback orientador**: ante preguntas fuera de alcance, AimBot responde sin fuentes y redirige hacia los servicios reales de AIMTALENT.
 - **Filtro de relevancia**: fragmentos con distancia coseno > `MAX_DISTANCE` (default 0.75) se descartan; sin fragmentos válidos se activa el fallback sin llamar al LLM.
 - **Proveedor conmutables por `.env`**: `MODEL_PROVIDER` y `EMBEDDINGS_PROVIDER`, con imports perezosos para no requerir SDKs no usados.
 - **Índice reutilizable**: se persiste en disco y se reconstruye desde el sidebar o al detectar base vacía.

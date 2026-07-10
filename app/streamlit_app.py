@@ -31,6 +31,24 @@ BRAND_GRAY_TEXT = "#5F6472"
 LOGO_PATH = PROJECT_ROOT / "assets" / "branding" / "logo_aimtalent_principal.png"
 ISOTIPO_PATH = PROJECT_ROOT / "assets" / "branding" / "isotipo_aimtalent_azul.png"
 
+# Avatar conversacional de AimBot (robot). El isotipo queda como fallback;
+# la marca principal se mantiene en header y sidebar.
+AVATAR_PATH = PROJECT_ROOT / "assets" / "branding" / "aimbot_avatar.png"
+if AVATAR_PATH.exists():
+    ASSISTANT_AVATAR = str(AVATAR_PATH)
+elif ISOTIPO_PATH.exists():
+    ASSISTANT_AVATAR = str(ISOTIPO_PATH)
+else:
+    ASSISTANT_AVATAR = None
+
+SUGGESTED_QUESTIONS = [
+    "¿Qué servicios ofrece AIMTALENT?",
+    "Necesito contratar talento",
+    "Quiero desarrollar líderes",
+    "Necesito evaluar competencias",
+    "Quiero trabajar clima y cultura",
+]
+
 WELCOME_MESSAGE = (
     "Hola, soy **AimBot de AIMTALENT**.\n\n"
     "Estoy aquí para ayudarte a identificar la solución más adecuada para tu reto de "
@@ -68,7 +86,7 @@ def render_sources(sources: list[dict]) -> None:
     """Muestra las fuentes como chips de descarga dentro de un expander."""
     if not sources:
         return
-    with st.expander("📄 Fuentes utilizadas — clic para descargar"):
+    with st.expander("📄 Fuentes de referencia"):
         chips = "".join(
             f'<div class="aim-source-row">{source_download_link(s["source"])}'
             f'<span class="aim-source-cat">{s["category"]}</span></div>'
@@ -214,8 +232,19 @@ st.markdown(
         font-weight: 500;
     }}
 
-    /* --- Botones --- */
-    .stButton > button {{
+    /* --- Avatar de AimBot: pequeño, redondo y sin deformar --- */
+    [data-testid="stChatMessage"] img[alt="assistant avatar"] {{
+        width: 38px !important;
+        height: 38px !important;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1.5px solid {BRAND_GRAY_BORDER};
+        background: #FFFFFF;
+    }}
+
+    /* --- Botones principales (azul de marca) --- */
+    .stButton > button[kind="primary"],
+    .stButton button[data-testid="stBaseButton-primary"] {{
         background: linear-gradient(135deg, {BRAND_BLUE} 0%, {BRAND_BLUE_DEEP} 100%);
         color: #FFFFFF;
         border: none;
@@ -225,10 +254,32 @@ st.markdown(
         padding: 0.55rem 1.2rem;
         transition: all 0.15s ease-in-out;
     }}
-    .stButton > button:hover {{
+    .stButton > button[kind="primary"]:hover,
+    .stButton button[data-testid="stBaseButton-primary"]:hover {{
         box-shadow: 0 4px 14px rgba(46, 76, 255, 0.40);
         color: #FFFFFF;
         transform: translateY(-1px);
+    }}
+
+    /* --- Chips de preguntas sugeridas (outline) --- */
+    .stButton > button[kind="secondary"],
+    .stButton button[data-testid="stBaseButton-secondary"] {{
+        background: #FFFFFF;
+        color: {BRAND_BLUE_DEEP};
+        border: 1.5px solid rgba(46, 76, 255, 0.45);
+        border-radius: 999px;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 500;
+        font-size: 0.85rem;
+        padding: 0.35rem 0.9rem;
+        transition: all 0.15s ease-in-out;
+    }}
+    .stButton > button[kind="secondary"]:hover,
+    .stButton button[data-testid="stBaseButton-secondary"]:hover {{
+        background: {BRAND_BLUE};
+        color: #FFFFFF;
+        border-color: {BRAND_BLUE};
+        box-shadow: 0 3px 10px rgba(46, 76, 255, 0.35);
     }}
 
     /* --- Sidebar --- */
@@ -305,12 +356,12 @@ with st.sidebar:
 - Proveedor LLM: `{settings.MODEL_PROVIDER}`
 - Embeddings: `{settings.EMBEDDINGS_PROVIDER}`
 - API key: {"✅ configurada" if api_key_ok else "⚠️ falta configurar"}
-- Documentos limpios: **{docs_count}**
+- Documentos indexables: **{docs_count}**
 - Índice vectorial: {"✅ listo" if index_ok else "⚠️ pendiente"}
 """
     )
 
-    if st.button("🔄 Reconstruir base vectorial", use_container_width=True):
+    if st.button("🔄 Reconstruir base vectorial", type="primary", use_container_width=True):
         try:
             with st.spinner("Reconstruyendo índice vectorial..."):
                 total = build_vector_store(rebuild=True)
@@ -337,20 +388,33 @@ if "messages" not in st.session_state:
         {"role": "assistant", "content": WELCOME_MESSAGE, "sources": []}
     ]
 
+pending_question = st.session_state.pop("pending_question", None)
+
 for message in st.session_state.messages:
-    avatar = str(ISOTIPO_PATH) if (message["role"] == "assistant" and ISOTIPO_PATH.exists()) else None
+    avatar = ASSISTANT_AVATAR if message["role"] == "assistant" else None
     with st.chat_message(message["role"], avatar=avatar):
         st.markdown(message["content"])
         render_sources(message.get("sources", []))
 
-user_question = st.chat_input("Escribe tu pregunta o cuéntame tu reto...")
+# Preguntas sugeridas: solo en la pantalla inicial, antes de la primera consulta
+if len(st.session_state.messages) == 1 and not pending_question:
+    st.caption("Sugerencias para empezar:")
+    for row_questions in (SUGGESTED_QUESTIONS[:3], SUGGESTED_QUESTIONS[3:]):
+        cols = st.columns(3)
+        for col, question in zip(cols, row_questions):
+            with col:
+                if st.button(question, key=f"sugerida_{question}", use_container_width=True):
+                    st.session_state.pending_question = question
+                    st.rerun()
+
+user_question = st.chat_input("Escribe tu pregunta o cuéntame tu reto...") or pending_question
 
 if user_question:
     st.session_state.messages.append({"role": "user", "content": user_question, "sources": []})
     with st.chat_message("user"):
         st.markdown(user_question)
 
-    with st.chat_message("assistant", avatar=str(ISOTIPO_PATH) if ISOTIPO_PATH.exists() else None):
+    with st.chat_message("assistant", avatar=ASSISTANT_AVATAR):
         if not settings.api_key_for(settings.MODEL_PROVIDER):
             answer = (
                 f"⚠️ Falta la API key del proveedor seleccionado (`{settings.MODEL_PROVIDER}`). "

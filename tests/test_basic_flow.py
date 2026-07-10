@@ -1,6 +1,7 @@
 """
 Pruebas básicas del flujo RAG (sin llamadas a APIs externas).
-Cubren carga documental, chunking, inferencia de categoría y prompt de AimBot.
+Cubren carga documental, exclusión de documentos internos, chunking,
+inferencia de categoría, prompt de AimBot y mensajes de fallback.
 """
 
 import sys
@@ -11,20 +12,41 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.config import settings
 from src.ingestion.document_loader import (
+    EXCLUDED_SOURCES,
     chunk_documents,
     infer_category,
     load_markdown_documents,
 )
-from src.prompts.aimbot_prompt import FALLBACK_MESSAGE, build_prompt
+from src.prompts.aimbot_prompt import (
+    FALLBACK_MESSAGE,
+    FALLBACK_RESPONSE,
+    build_prompt,
+)
 
 
-def test_load_markdown_documents():
+def test_load_markdown_documents_excludes_internal():
     documents = load_markdown_documents()
-    assert len(documents) >= 8, "La base documental limpia debe estar en data/raw"
+    assert len(documents) >= 7, "La base comercial debe estar en data/raw"
+    sources = {doc["metadata"]["source"] for doc in documents}
+    assert not sources & EXCLUDED_SOURCES, "Los documentos internos no deben cargarse"
     for doc in documents:
         assert doc["content"].strip()
         assert doc["metadata"]["source"].endswith(".md")
         assert doc["metadata"]["category"]
+
+
+def test_load_markdown_documents_include_internal_flag():
+    documents = load_markdown_documents(include_internal=True)
+    sources = {doc["metadata"]["source"] for doc in documents}
+    assert EXCLUDED_SOURCES <= sources, "Con include_internal deben cargarse todos"
+
+
+def test_excluded_sources_are_the_internal_docs():
+    assert EXCLUDED_SOURCES == {
+        "00_readme_base_conocimiento.md",
+        "02_aimbot_comportamiento.md",
+        "09_matriz_documental_limpia.md",
+    }
 
 
 def test_infer_category():
@@ -41,6 +63,7 @@ def test_chunk_documents_respects_size_and_metadata():
         assert len(chunk["content"]) <= 800
         meta = chunk["metadata"]
         assert meta["source"].endswith(".md")
+        assert meta["source"] not in EXCLUDED_SOURCES
         assert meta["category"]
         assert meta["chunk_number"] >= 1
         assert "section" in meta
@@ -56,15 +79,18 @@ def test_build_prompt_contains_question_and_context():
     prompt = build_prompt("¿Qué servicios ofrece AIMTALENT?", chunks)
     assert "¿Qué servicios ofrece AIMTALENT?" in prompt
     assert "AIMTALENT ofrece Executive Search." in prompt
-    assert "03_executive_search.md" in prompt
     assert FALLBACK_MESSAGE in prompt
 
 
-def test_fallback_message_matches_expected():
+def test_fallback_messages():
     assert FALLBACK_MESSAGE == (
         "No encontré información suficiente en la base documental disponible "
         "para responder con precisión."
     )
+    # El fallback orientador no debe mencionar documentos internos
+    assert ".md" not in FALLBACK_RESPONSE
+    assert "Executive Search" in FALLBACK_RESPONSE
+    assert "¿Tu necesidad está relacionada" in FALLBACK_RESPONSE
 
 
 def test_settings_defaults():
