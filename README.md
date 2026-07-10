@@ -238,15 +238,16 @@ streamlit run app/streamlit_app.py --server.port 8501 --server.address 0.0.0.0
 - Capturas de la app funcionando: `assets/screenshots/`
 - Video demo: `assets/demo/`
 
-Capturas recomendadas para `assets/screenshots/` (sin API keys, `.env` ni datos de la cuenta OCI):
+Capturas del despliegue en OCI (`assets/screenshots/`):
 
-| Archivo sugerido | Contenido |
+| Captura | Contenido |
 |---|---|
-| `01_pantalla_inicial_oci.png` | Pantalla inicial de AimBot en la URL pública de OCI |
-| `02_respuesta_hiring.png` | Respuesta consultiva sobre Hiring Solutions |
-| `03_fuentes_referencia.png` | Expander "Fuentes de referencia" con documentos comerciales |
-| `04_fallback_fuera_alcance.png` | Pregunta fuera de alcance con fallback sin fuentes |
-| `05_oci_instance_running.png` | Instancia Compute en estado Running (opcional) |
+| [01_home_oci.png](assets/screenshots/01_home_oci.png) | Pantalla inicial de AimBot en la URL pública de OCI, con avatar y preguntas sugeridas |
+| [02_hiring_response.png](assets/screenshots/02_hiring_response.png) | Respuesta consultiva sobre Hiring Solutions con preguntas de diagnóstico |
+| [03_sources_reference.png](assets/screenshots/03_sources_reference.png) | Expander "Fuentes de referencia" con documentos comerciales descargables |
+| [04_fallback_out_of_scope.png](assets/screenshots/04_fallback_out_of_scope.png) | Pregunta fuera de alcance con fallback orientador, sin fuentes |
+| [05_oci_instance_running.png](assets/screenshots/05_oci_instance_running.png) | Instancia Compute de OCI en estado Running |
+| [06_terminal_streamlit_running.png](assets/screenshots/06_terminal_streamlit_running.png) | Actualización del repo y Streamlit corriendo en la instancia (tmux + curl 200) |
 
 ## 17. Pruebas
 
