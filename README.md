@@ -1,5 +1,6 @@
 # Challenge AIMTALENT — AIMBOT Knowledge Agent
 
+##VIDEO PRESENTACIÓN: https://drive.google.com/file/d/1oDanlrO4C8zOiX9H8ymXtJ1A91uptLHh/view?usp=sharing
 ## 1. Descripción del proyecto
 
 **AIMBOT Knowledge Agent** es un agente de inteligencia artificial comercial y consultivo de AIMTALENT. Responde preguntas sobre servicios, unidades de negocio, metodología AimTarget, trazabilidad y levantamiento de requerimientos comerciales, usando exclusivamente una **base documental limpia y anonimizada**.
